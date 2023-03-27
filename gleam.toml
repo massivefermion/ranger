@@ -1,5 +1,5 @@
 name = "ranger"
-version = "0.1.0"
+version = "0.1.1"
 
 description = "create ranges over any type"
 licences = ["Apache-2.0"]
