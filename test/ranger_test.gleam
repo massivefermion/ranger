@@ -9,7 +9,7 @@ pub fn main() {
 }
 
 pub fn invalid_string_test() {
-  ranger.ranger(ranger.Options(
+  ranger.create(ranger.Options(
     validate: fn(a) { string.length(a) == 1 },
     negate_step: fn(s) { -1 * s },
     add: fn(a: String, b: Int) {
@@ -29,7 +29,7 @@ pub fn invalid_string_test() {
 }
 
 pub fn a_to_e_test() {
-  ranger.ranger(ranger.Options(
+  ranger.create(ranger.Options(
     validate: fn(a) { string.length(a) == 1 },
     negate_step: fn(s) { -1 * s },
     add: fn(a: String, b: Int) {
@@ -52,7 +52,7 @@ pub fn a_to_e_test() {
 }
 
 pub fn z_to_p_double_step_test() {
-  ranger.ranger(ranger.Options(
+  ranger.create(ranger.Options(
     validate: fn(a) { string.length(a) == 1 },
     negate_step: fn(s) { -1 * s },
     add: fn(a: String, b: Int) {
@@ -75,7 +75,7 @@ pub fn z_to_p_double_step_test() {
 }
 
 pub fn z_to_p_triple_step_test() {
-  ranger.ranger(ranger.Options(
+  ranger.create(ranger.Options(
     validate: fn(a) { string.length(a) == 1 },
     negate_step: fn(s) { -1 * s },
     add: fn(a: String, b: Int) {

@@ -34,7 +34,7 @@ pub type Options(item_type, step_type) {
 /// >     },
 /// >     compare: string.compare,
 /// >   )
-/// > let range = ranger(options)
+/// > let range = create(options)
 ///
 /// > range("ab", "e", 1)
 /// Error(Nil)
@@ -65,7 +65,7 @@ pub type Options(item_type, step_type) {
 /// >     add: fn(a, b) { a +. b },
 /// >     compare: float.compare,
 /// >   )
-/// > let range = ranger(options)
+/// > let range = create(options)
 ///
 /// > let assert Ok(weird_step_case) = range(1.25, 4.5, -0.5)
 /// > weird_step_case |> unwrap |> iterator.to_list
@@ -80,7 +80,7 @@ pub type Options(item_type, step_type) {
 /// [2.5]
 /// ```
 ///
-pub fn ranger(
+pub fn create(
   options: Options(item_type, step_type),
 ) -> fn(item_type, item_type, step_type) -> Result(Range(item_type), Nil) {
   let should_negate = fn(a, s) -> option.Option(Bool) {
