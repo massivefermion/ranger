@@ -9,7 +9,7 @@ pub fn main() {
 }
 
 pub fn invalid_string_test() {
-  ranger.create(ranger.Options(
+  ranger.create(
     validate: fn(a) { string.length(a) == 1 },
     negate_step: fn(s) { -1 * s },
     add: fn(a: String, b: Int) {
@@ -20,7 +20,7 @@ pub fn invalid_string_test() {
       string.from_utf_codepoints([new_code])
     },
     compare: string.compare,
-  ))(
+  )(
     "ab",
     "e",
     1,
@@ -29,7 +29,7 @@ pub fn invalid_string_test() {
 }
 
 pub fn a_to_e_test() {
-  ranger.create(ranger.Options(
+  ranger.create(
     validate: fn(a) { string.length(a) == 1 },
     negate_step: fn(s) { -1 * s },
     add: fn(a: String, b: Int) {
@@ -40,7 +40,7 @@ pub fn a_to_e_test() {
       string.from_utf_codepoints([new_code])
     },
     compare: string.compare,
-  ))(
+  )(
     "a",
     "e",
     -1,
@@ -52,7 +52,7 @@ pub fn a_to_e_test() {
 }
 
 pub fn z_to_p_double_step_test() {
-  ranger.create(ranger.Options(
+  ranger.create(
     validate: fn(a) { string.length(a) == 1 },
     negate_step: fn(s) { -1 * s },
     add: fn(a: String, b: Int) {
@@ -63,7 +63,7 @@ pub fn z_to_p_double_step_test() {
       string.from_utf_codepoints([new_code])
     },
     compare: string.compare,
-  ))(
+  )(
     "z",
     "p",
     -2,
@@ -75,7 +75,7 @@ pub fn z_to_p_double_step_test() {
 }
 
 pub fn z_to_p_triple_step_test() {
-  ranger.create(ranger.Options(
+  ranger.create(
     validate: fn(a) { string.length(a) == 1 },
     negate_step: fn(s) { -1 * s },
     add: fn(a: String, b: Int) {
@@ -86,7 +86,7 @@ pub fn z_to_p_triple_step_test() {
       string.from_utf_codepoints([new_code])
     },
     compare: string.compare,
-  ))(
+  )(
     "z",
     "p",
     3,
