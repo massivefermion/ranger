@@ -1,5 +1,5 @@
 name = "ranger"
-version = "0.3.0"
+version = "0.4.0"
 
 description = "create ranges over any type"
 licences = ["Apache-2.0"]
@@ -7,7 +7,7 @@ links = [{title = "gleam", href = "https://gleam.run"}]
 repository = {type = "github", user = "massivefermion", repo = "ranger"}
 
 [dependencies]
-gleam_stdlib = "~> 0.30"
+gleam_stdlib = "~> 0.31"
 
 [dev-dependencies]
-gleeunit = "~> 0.10"
+gleeunit = "~> 0.11"
