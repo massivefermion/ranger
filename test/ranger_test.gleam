@@ -20,11 +20,7 @@ pub fn invalid_string_test() {
       string.from_utf_codepoints([new_code])
     },
     compare: string.compare,
-  )(
-    "ab",
-    "e",
-    1,
-  )
+  )("ab", "e", 1)
   |> should.be_error
 }
 
@@ -40,11 +36,7 @@ pub fn a_to_e_test() {
       string.from_utf_codepoints([new_code])
     },
     compare: string.compare,
-  )(
-    "a",
-    "e",
-    -1,
-  )
+  )("a", "e", -1)
   |> should.be_ok
   |> ranger.unwrap
   |> iterator.to_list
@@ -63,11 +55,7 @@ pub fn z_to_p_double_step_test() {
       string.from_utf_codepoints([new_code])
     },
     compare: string.compare,
-  )(
-    "z",
-    "p",
-    -2,
-  )
+  )("z", "p", -2)
   |> should.be_ok
   |> ranger.unwrap
   |> iterator.to_list
@@ -86,11 +74,7 @@ pub fn z_to_p_triple_step_test() {
       string.from_utf_codepoints([new_code])
     },
     compare: string.compare,
-  )(
-    "z",
-    "p",
-    3,
-  )
+  )("z", "p", 3)
   |> should.be_ok
   |> ranger.unwrap
   |> iterator.to_list
