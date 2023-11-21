@@ -7,6 +7,11 @@ pub opaque type Range(item_type) {
   Range(iterator.Iterator(item_type))
 }
 
+type Direction {
+  Forward
+  Backward
+}
+
 /// returns a function that can be used to create a range
 ///
 /// ## Examples
@@ -75,69 +80,32 @@ pub fn create(
   add add: fn(item_type, step_type) -> item_type,
   compare compare: fn(item_type, item_type) -> order.Order,
 ) -> fn(item_type, item_type, step_type) -> Result(Range(item_type), Nil) {
-  let should_negate = fn(a, s) -> option.Option(Bool) {
-    case compare(a, add(a, s)) {
-      order.Eq -> option.None
-      order.Lt -> option.Some(True)
-      order.Gt -> option.Some(False)
+  let adjust_step = fn(a, b, s) -> option.Option(#(Direction, step_type)) {
+    case [compare(a, b), compare(a, add(a, s))] {
+      [order.Eq, _] -> option.None
+      [_, order.Eq] -> option.None
+      [order.Lt, order.Lt] -> option.Some(#(Forward, s))
+      [order.Gt, order.Gt] -> option.Some(#(Backward, s))
+      [order.Lt, order.Gt] -> option.Some(#(Forward, negate_step(s)))
+      [order.Gt, order.Lt] -> option.Some(#(Backward, negate_step(s)))
     }
   }
 
   fn(a: item_type, b: item_type, s: step_type) {
     use <- bool.guard(!validate(a) || !validate(b), Error(Nil))
-    let should_negate_option = should_negate(a, s)
-    use <- bool.guard(
-      option.is_none(should_negate_option),
-      iterator.once(fn() { a })
-      |> Range
-      |> Ok,
-    )
-    let should_negate = option.unwrap(should_negate_option, True)
-
-    case compare(a, b) {
-      order.Eq -> iterator.once(fn() { a })
-
-      order.Gt ->
+    case adjust_step(a, b, s) {
+      option.Some(#(direction, step)) ->
         iterator.unfold(
           a,
           fn(current) {
-            case compare(current, b) {
-              order.Lt -> iterator.Done
-              _ ->
-                iterator.Next(
-                  current,
-                  add(
-                    current,
-                    case should_negate {
-                      True -> negate_step(s)
-                      False -> s
-                    },
-                  ),
-                )
+            case #(compare(current, b), direction) {
+              #(order.Gt, Forward) -> iterator.Done
+              #(order.Lt, Backward) -> iterator.Done
+              _ -> iterator.Next(current, add(current, step))
             }
           },
         )
-
-      order.Lt ->
-        iterator.unfold(
-          a,
-          fn(current) {
-            case compare(current, b) {
-              order.Gt -> iterator.Done
-              _ ->
-                iterator.Next(
-                  current,
-                  add(
-                    current,
-                    case should_negate {
-                      True -> s
-                      False -> negate_step(s)
-                    },
-                  ),
-                )
-            }
-          },
-        )
+      option.None -> iterator.once(fn() { a })
     }
     |> Range
     |> Ok
