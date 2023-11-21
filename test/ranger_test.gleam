@@ -38,7 +38,6 @@ pub fn a_to_e_test() {
     compare: string.compare,
   )("a", "e", -1)
   |> should.be_ok
-  |> ranger.unwrap
   |> iterator.to_list
   |> should.equal(["a", "b", "c", "d", "e"])
 }
@@ -57,7 +56,6 @@ pub fn z_to_p_double_step_test() {
     compare: string.compare,
   )("z", "p", -2)
   |> should.be_ok
-  |> ranger.unwrap
   |> iterator.to_list
   |> should.equal(["z", "x", "v", "t", "r", "p"])
 }
@@ -76,7 +74,6 @@ pub fn z_to_p_triple_step_test() {
     compare: string.compare,
   )("z", "p", 3)
   |> should.be_ok
-  |> ranger.unwrap
   |> iterator.to_list
   |> should.equal(["z", "w", "t", "q"])
 }

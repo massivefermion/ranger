@@ -3,10 +3,6 @@ import gleam/order
 import gleam/option
 import gleam/iterator
 
-pub opaque type Range(item_type) {
-  Range(iterator.Iterator(item_type))
-}
-
 type Direction {
   Forward
   Backward
@@ -79,7 +75,8 @@ pub fn create(
   negate_step negate_step: fn(step_type) -> step_type,
   add add: fn(item_type, step_type) -> item_type,
   compare compare: fn(item_type, item_type) -> order.Order,
-) -> fn(item_type, item_type, step_type) -> Result(Range(item_type), Nil) {
+) -> fn(item_type, item_type, step_type) ->
+  Result(iterator.Iterator(item_type), Nil) {
   let adjust_step = fn(a, b, s) -> option.Option(#(Direction, step_type)) {
     case [compare(a, b), compare(a, add(a, s))] {
       [order.Eq, _] -> option.None
@@ -107,7 +104,6 @@ pub fn create(
         )
       option.None -> iterator.once(fn() { a })
     }
-    |> Range
     |> Ok
   }
 }
@@ -141,7 +137,7 @@ pub fn create_infinite(
   validate validate: fn(item_type) -> Bool,
   add add: fn(item_type, step_type) -> item_type,
   compare compare: fn(item_type, item_type) -> order.Order,
-) -> fn(item_type, step_type) -> Result(Range(item_type), Nil) {
+) -> fn(item_type, step_type) -> Result(iterator.Iterator(item_type), Nil) {
   let is_step_zero = fn(a, s) -> Bool {
     case compare(a, add(a, s)) {
       order.Eq -> True
@@ -154,18 +150,10 @@ pub fn create_infinite(
     use <- bool.guard(
       is_step_zero(a, s),
       iterator.once(fn() { a })
-      |> Range
       |> Ok,
     )
 
     iterator.unfold(a, fn(current) { iterator.Next(current, add(current, s)) })
-    |> Range
     |> Ok
-  }
-}
-
-pub fn unwrap(value: Range(item_type)) -> iterator.Iterator(item_type) {
-  case value {
-    Range(iterator) -> iterator
   }
 }
