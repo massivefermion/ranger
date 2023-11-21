@@ -4,7 +4,7 @@ version = "1.0.0"
 description = "create ranges over any type"
 gleam = ">= 0.32.0"
 licences = ["Apache-2.0"]
-links = [{title = "gleam", href = "https://gleam.run"}]
+links = [{title = "Gleam", href = "https://gleam.run"}]
 repository = {type = "github", user = "massivefermion", repo = "ranger"}
 
 [dependencies]
