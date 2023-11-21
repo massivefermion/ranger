@@ -31,19 +31,19 @@ type Direction {
 /// Error(Nil)
 ///
 /// > let assert Ok(a_to_e) = range("a", "e", 1)
-/// > a_to_e |> unwrap |> iterator.to_list
+/// > a_to_e |> iterator.to_list
 /// ["a", "b", "c", "d", "e"]
 /// 
 /// > let assert Ok(z_to_p) = range("z", "p", 1)
-/// > z_to_p |> unwrap |> iterator.to_list
+/// > z_to_p |> iterator.to_list
 /// ["z", "y", "x", "w", "v", "u", "t", "s", "r", "q", "p"]
 ///
 /// > let assert Ok(z_to_p) = range("z", "p", -2)
-/// > z_to_p |> unwrap |> iterator.to_list
+/// > z_to_p |> iterator.to_list
 /// ["z", "x", "v", "t", "r", "p"]
 ///
 /// > let assert Ok(z_to_p) = range("z", "p", 3)
-/// > z_to_p |> unwrap |> iterator.to_list
+/// > z_to_p |> iterator.to_list
 /// ["z", "w", "t", "q"]
 /// ```
 ///
@@ -58,15 +58,15 @@ type Direction {
 /// >    )
 ///
 /// > let assert Ok(weird_step_case) = range(1.25, 4.5, -0.5)
-/// > weird_step_case |> unwrap |> iterator.to_list
+/// > weird_step_case |> iterator.to_list
 /// [1.25, 1.75, 2.25, 2.75, 3.25, 3.75, 4.25]
 /// 
 /// > let assert Ok(single_item_case) = range(1.25, 1.25, -0.25)
-/// > single_item_case |> unwrap |> iterator.to_list
+/// > single_item_case |> iterator.to_list
 /// [1.25]
 ///
 /// > let assert Ok(zero_step_case) = range(2.5, 5.0, 0)
-/// > zero_step_case |> unwrap |> iterator.to_list
+/// > zero_step_case |> iterator.to_list
 /// [2.5]
 /// ```
 ///
@@ -129,7 +129,7 @@ pub fn create(
 /// >   )
 ///
 /// > let assert Ok(from_a) = range("a", 1)
-/// > from_a |> unwrap |> iterator.take(26) |> iterator.to_list
+/// > from_a |> iterator.take(26) |> iterator.to_list
 /// ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n",
 ///   "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
 /// ```
