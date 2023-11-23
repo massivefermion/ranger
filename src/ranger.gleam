@@ -77,22 +77,33 @@ pub fn create(
   compare compare: fn(item_type, item_type) -> order.Order,
 ) -> fn(item_type, item_type, step_type) ->
   Result(iterator.Iterator(item_type), Nil) {
-  let adjust_step = fn(a, b, s) -> option.Option(#(Direction, step_type)) {
-    case [compare(a, b), compare(a, add(a, s))] {
-      [order.Eq, _] -> option.None
-      [_, order.Eq] -> option.None
-      [order.Lt, order.Lt] -> option.Some(#(Forward, s))
-      [order.Gt, order.Gt] -> option.Some(#(Backward, s))
-      [order.Lt, order.Gt] -> option.Some(#(Forward, negate_step(s)))
-      [order.Gt, order.Lt] -> option.Some(#(Backward, negate_step(s)))
+  let adjust_step = fn(a, b, s) -> Result(
+    option.Option(#(Direction, step_type)),
+    Nil,
+  ) {
+    let negated_step = negate_step(s)
+    case
+      [compare(a, b), compare(a, add(a, s)), compare(a, add(a, negated_step))]
+    {
+      [order.Eq, _, _] -> Ok(option.None)
+      [_, order.Eq, order.Eq] -> Ok(option.None)
+
+      [order.Lt, order.Lt, _] -> Ok(option.Some(#(Forward, s)))
+      [order.Lt, _, order.Lt] -> Ok(option.Some(#(Forward, negated_step)))
+      [order.Lt, _, _] -> Error(Nil)
+
+      [order.Gt, order.Gt, _] -> Ok(option.Some(#(Backward, s)))
+      [order.Gt, _, order.Gt] -> Ok(option.Some(#(Backward, negated_step)))
+      [order.Gt, _, _] -> Error(Nil)
     }
   }
 
   fn(a: item_type, b: item_type, s: step_type) {
     use <- bool.guard(!validate(a) || !validate(b), Error(Nil))
+
     case adjust_step(a, b, s) {
-      option.Some(#(direction, step)) ->
-        iterator.unfold(
+      Ok(option.Some(#(direction, step))) ->
+        Ok(iterator.unfold(
           a,
           fn(current) {
             case #(compare(current, b), direction) {
@@ -101,10 +112,10 @@ pub fn create(
               _ -> iterator.Next(current, add(current, step))
             }
           },
-        )
-      option.None -> iterator.once(fn() { a })
+        ))
+      Ok(option.None) -> Ok(iterator.once(fn() { a }))
+      Error(Nil) -> Error(Nil)
     }
-    |> Ok
   }
 }
 
@@ -147,6 +158,7 @@ pub fn create_infinite(
 
   fn(a: item_type, s: step_type) {
     use <- bool.guard(!validate(a), Error(Nil))
+
     use <- bool.guard(
       is_step_zero(a, s),
       iterator.once(fn() { a })
