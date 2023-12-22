@@ -23,3 +23,23 @@ gleam add ranger
 ```
 
 and its documentation can be found at <https://hexdocs.pm/ranger>.
+
+## <img width=64 src="https://raw.githubusercontent.com/massivefermion/ranger/main/icon.png"> Usage
+
+```gleam
+import ranger
+
+pub fn main() {
+  let range =
+    ranger.create(
+      validate: fn(_) { True },
+      negate_step: fn(s) { -1.0 *. s },
+      add: fn(a, b) { a +. b },
+      compare: float.compare,
+    )
+
+  let assert Ok(z_to_p) = range("z", "p", 1)
+  z_to_p
+  |> iterator.to_list
+}
+```

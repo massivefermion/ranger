@@ -18,7 +18,7 @@ type Direction {
 /// >    validate: fn(a) { string.length(a) == 1 },
 /// >    negate_step: fn(s) { -1 * s },
 /// >    add: fn(a: String, b: Int) {
-/// >      let [code] = string.to_utf_codepoints(a)
+/// >      let assert [code] = string.to_utf_codepoints(a)
 /// >      let int_code = string.utf_codepoint_to_int(code)
 /// >      let new_int_code = int_code + b
 /// >      let assert Ok(new_code) = string.utf_codepoint(new_int_code)
@@ -83,18 +83,18 @@ pub fn create(
   ) {
     let negated_step = negate_step(s)
     case
-      [compare(a, b), compare(a, add(a, s)), compare(a, add(a, negated_step))]
+      #(compare(a, b), compare(a, add(a, s)), compare(a, add(a, negated_step)))
     {
-      [order.Eq, _, _] -> Ok(option.None)
-      [_, order.Eq, order.Eq] -> Ok(option.None)
+      #(order.Eq, _, _) -> Ok(option.None)
+      #(_, order.Eq, order.Eq) -> Ok(option.None)
 
-      [order.Lt, order.Lt, _] -> Ok(option.Some(#(Forward, s)))
-      [order.Lt, _, order.Lt] -> Ok(option.Some(#(Forward, negated_step)))
-      [order.Lt, _, _] -> Error(Nil)
+      #(order.Lt, order.Lt, _) -> Ok(option.Some(#(Forward, s)))
+      #(order.Lt, _, order.Lt) -> Ok(option.Some(#(Forward, negated_step)))
+      #(order.Lt, _, _) -> Error(Nil)
 
-      [order.Gt, order.Gt, _] -> Ok(option.Some(#(Backward, s)))
-      [order.Gt, _, order.Gt] -> Ok(option.Some(#(Backward, negated_step)))
-      [order.Gt, _, _] -> Error(Nil)
+      #(order.Gt, order.Gt, _) -> Ok(option.Some(#(Backward, s)))
+      #(order.Gt, _, order.Gt) -> Ok(option.Some(#(Backward, negated_step)))
+      #(order.Gt, _, _) -> Error(Nil)
     }
   }
 
@@ -103,16 +103,15 @@ pub fn create(
 
     case adjust_step(a, b, s) {
       Ok(option.Some(#(direction, step))) ->
-        Ok(iterator.unfold(
-          a,
-          fn(current) {
+        Ok(
+          iterator.unfold(a, fn(current) {
             case #(compare(current, b), direction) {
               #(order.Gt, Forward) -> iterator.Done
               #(order.Lt, Backward) -> iterator.Done
               _ -> iterator.Next(current, add(current, step))
             }
-          },
-        ))
+          }),
+        )
       Ok(option.None) -> Ok(iterator.once(fn() { a }))
       Error(Nil) -> Error(Nil)
     }
@@ -130,7 +129,7 @@ pub fn create(
 /// >  create_infinite(
 /// >    validate: fn(a) { string.length(a) == 1 },
 /// >    add: fn(a: String, b: Int) {
-/// >      let [code] = string.to_utf_codepoints(a)
+/// >      let assert [code] = string.to_utf_codepoints(a)
 /// >      let int_code = string.utf_codepoint_to_int(code)
 /// >      let new_int_code = int_code + b
 /// >      let assert Ok(new_code) = string.utf_codepoint(new_int_code)

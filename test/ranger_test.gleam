@@ -13,7 +13,7 @@ pub fn invalid_string_test() {
     validate: fn(a) { string.length(a) == 1 },
     negate_step: fn(s) { -1 * s },
     add: fn(a: String, b: Int) {
-      let [code] = string.to_utf_codepoints(a)
+      let assert [code] = string.to_utf_codepoints(a)
       let int_code = string.utf_codepoint_to_int(code)
       let new_int_code = int_code + b
       let assert Ok(new_code) = string.utf_codepoint(new_int_code)
@@ -29,7 +29,7 @@ pub fn a_to_e_test() {
     validate: fn(a) { string.length(a) == 1 },
     negate_step: fn(s) { -1 * s },
     add: fn(a: String, b: Int) {
-      let [code] = string.to_utf_codepoints(a)
+      let assert [code] = string.to_utf_codepoints(a)
       let int_code = string.utf_codepoint_to_int(code)
       let new_int_code = int_code + b
       let assert Ok(new_code) = string.utf_codepoint(new_int_code)
@@ -47,7 +47,7 @@ pub fn z_to_p_double_step_test() {
     validate: fn(a) { string.length(a) == 1 },
     negate_step: fn(s) { -1 * s },
     add: fn(a: String, b: Int) {
-      let [code] = string.to_utf_codepoints(a)
+      let assert [code] = string.to_utf_codepoints(a)
       let int_code = string.utf_codepoint_to_int(code)
       let new_int_code = int_code + b
       let assert Ok(new_code) = string.utf_codepoint(new_int_code)
@@ -65,7 +65,7 @@ pub fn z_to_p_triple_step_test() {
     validate: fn(a) { string.length(a) == 1 },
     negate_step: fn(s) { -1 * s },
     add: fn(a: String, b: Int) {
-      let [code] = string.to_utf_codepoints(a)
+      let assert [code] = string.to_utf_codepoints(a)
       let int_code = string.utf_codepoint_to_int(code)
       let new_int_code = int_code + b
       let assert Ok(new_code) = string.utf_codepoint(new_int_code)
