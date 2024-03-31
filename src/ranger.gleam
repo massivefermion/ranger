@@ -3,11 +3,6 @@ import gleam/order
 import gleam/option
 import gleam/iterator
 
-type Direction {
-  Forward
-  Backward
-}
-
 /// returns a function that can be used to create a range
 ///
 /// ## Examples
@@ -77,24 +72,27 @@ pub fn create(
   compare compare: fn(item_type, item_type) -> order.Order,
 ) -> fn(item_type, item_type, step_type) ->
   Result(iterator.Iterator(item_type), Nil) {
-  let adjust_step = fn(a, b, s) -> Result(
+  let adjust_step = fn(a, b, step) -> Result(
     option.Option(#(Direction, step_type)),
     Nil,
   ) {
-    let negated_step = negate_step(s)
+    let negated_step = negate_step(step)
+
     case
-      #(compare(a, b), compare(a, add(a, s)), compare(a, add(a, negated_step)))
+      compare(a, b),
+      compare(a, add(a, step)),
+      compare(a, add(a, negated_step))
     {
-      #(order.Eq, _, _) -> Ok(option.None)
-      #(_, order.Eq, order.Eq) -> Ok(option.None)
+      order.Eq, _, _ -> Ok(option.None)
+      _, order.Eq, order.Eq -> Ok(option.None)
 
-      #(order.Lt, order.Lt, _) -> Ok(option.Some(#(Forward, s)))
-      #(order.Lt, _, order.Lt) -> Ok(option.Some(#(Forward, negated_step)))
-      #(order.Lt, _, _) -> Error(Nil)
+      order.Lt, order.Lt, _ -> Ok(option.Some(#(Forward, step)))
+      order.Lt, _, order.Lt -> Ok(option.Some(#(Forward, negated_step)))
+      order.Lt, _, _ -> Error(Nil)
 
-      #(order.Gt, order.Gt, _) -> Ok(option.Some(#(Backward, s)))
-      #(order.Gt, _, order.Gt) -> Ok(option.Some(#(Backward, negated_step)))
-      #(order.Gt, _, _) -> Error(Nil)
+      order.Gt, order.Gt, _ -> Ok(option.Some(#(Backward, step)))
+      order.Gt, _, order.Gt -> Ok(option.Some(#(Backward, negated_step)))
+      order.Gt, _, _ -> Error(Nil)
     }
   }
 
@@ -105,10 +103,10 @@ pub fn create(
       Ok(option.Some(#(direction, step))) ->
         Ok(
           iterator.unfold(a, fn(current) {
-            case #(compare(current, b), direction) {
-              #(order.Gt, Forward) -> iterator.Done
-              #(order.Lt, Backward) -> iterator.Done
-              _ -> iterator.Next(current, add(current, step))
+            case compare(current, b), direction {
+              order.Gt, Forward -> iterator.Done
+              order.Lt, Backward -> iterator.Done
+              _, _ -> iterator.Next(current, add(current, step))
             }
           }),
         )
@@ -161,10 +159,15 @@ pub fn create_infinite(
     use <- bool.guard(
       is_step_zero(a, s),
       iterator.once(fn() { a })
-      |> Ok,
+        |> Ok,
     )
 
     iterator.unfold(a, fn(current) { iterator.Next(current, add(current, s)) })
     |> Ok
   }
+}
+
+type Direction {
+  Forward
+  Backward
 }
