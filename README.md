@@ -27,6 +27,7 @@ and its documentation can be found at <https://hexdocs.pm/ranger>.
 ## <img width=64 src="https://raw.githubusercontent.com/massivefermion/ranger/main/icon.png"> Usage
 
 ```gleam
+import gleam/float
 import ranger
 
 pub fn main() {

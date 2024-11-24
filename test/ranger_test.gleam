@@ -1,7 +1,9 @@
-import gleeunit
-import gleam/string
 import gleam/iterator
+import gleam/string
+
+import gleeunit
 import gleeunit/should
+
 import ranger
 
 pub fn main() {

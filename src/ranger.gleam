@@ -1,7 +1,7 @@
 import gleam/bool
-import gleam/order
-import gleam/option
 import gleam/iterator
+import gleam/option
+import gleam/order
 
 /// returns a function that can be used to create a range
 ///
