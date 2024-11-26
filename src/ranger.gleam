@@ -1,7 +1,7 @@
 import gleam/bool
-import gleam/iterator
 import gleam/option
 import gleam/order
+import gleam/yielder
 
 /// returns a function that can be used to create a range
 ///
@@ -26,19 +26,19 @@ import gleam/order
 /// Error(Nil)
 ///
 /// > let assert Ok(a_to_e) = range("a", "e", 1)
-/// > a_to_e |> iterator.to_list
+/// > a_to_e |> yielder.to_list
 /// ["a", "b", "c", "d", "e"]
 /// 
 /// > let assert Ok(z_to_p) = range("z", "p", 1)
-/// > z_to_p |> iterator.to_list
+/// > z_to_p |> yielder.to_list
 /// ["z", "y", "x", "w", "v", "u", "t", "s", "r", "q", "p"]
 ///
 /// > let assert Ok(z_to_p) = range("z", "p", -2)
-/// > z_to_p |> iterator.to_list
+/// > z_to_p |> yielder.to_list
 /// ["z", "x", "v", "t", "r", "p"]
 ///
 /// > let assert Ok(z_to_p) = range("z", "p", 3)
-/// > z_to_p |> iterator.to_list
+/// > z_to_p |> yielder.to_list
 /// ["z", "w", "t", "q"]
 /// ```
 ///
@@ -53,15 +53,15 @@ import gleam/order
 /// >    )
 ///
 /// > let assert Ok(weird_step_case) = range(1.25, 4.5, -0.5)
-/// > weird_step_case |> iterator.to_list
+/// > weird_step_case |> yielder.to_list
 /// [1.25, 1.75, 2.25, 2.75, 3.25, 3.75, 4.25]
 /// 
 /// > let assert Ok(single_item_case) = range(1.25, 1.25, -0.25)
-/// > single_item_case |> iterator.to_list
+/// > single_item_case |> yielder.to_list
 /// [1.25]
 ///
 /// > let assert Ok(zero_step_case) = range(2.5, 5.0, 0)
-/// > zero_step_case |> iterator.to_list
+/// > zero_step_case |> yielder.to_list
 /// [2.5]
 /// ```
 ///
@@ -71,7 +71,7 @@ pub fn create(
   add add: fn(item_type, step_type) -> item_type,
   compare compare: fn(item_type, item_type) -> order.Order,
 ) -> fn(item_type, item_type, step_type) ->
-  Result(iterator.Iterator(item_type), Nil) {
+  Result(yielder.Yielder(item_type), Nil) {
   let adjust_step = fn(a, b, step) -> Result(
     option.Option(#(Direction, step_type)),
     Nil,
@@ -102,15 +102,15 @@ pub fn create(
     case adjust_step(a, b, s) {
       Ok(option.Some(#(direction, step))) ->
         Ok(
-          iterator.unfold(a, fn(current) {
+          yielder.unfold(a, fn(current) {
             case compare(current, b), direction {
-              order.Gt, Forward -> iterator.Done
-              order.Lt, Backward -> iterator.Done
-              _, _ -> iterator.Next(current, add(current, step))
+              order.Gt, Forward -> yielder.Done
+              order.Lt, Backward -> yielder.Done
+              _, _ -> yielder.Next(current, add(current, step))
             }
           }),
         )
-      Ok(option.None) -> Ok(iterator.once(fn() { a }))
+      Ok(option.None) -> Ok(yielder.once(fn() { a }))
       Error(Nil) -> Error(Nil)
     }
   }
@@ -118,7 +118,7 @@ pub fn create(
 
 /// returns a function that can be used to create an infinite range
 ///
-/// should be used carefully because careless use of infinite iterators could crash your app
+/// should be used carefully because careless use of infinite yielders could crash your app
 ///
 /// ## Examples
 ///
@@ -137,7 +137,7 @@ pub fn create(
 /// >   )
 ///
 /// > let assert Ok(from_a) = range("a", 1)
-/// > from_a |> iterator.take(26) |> iterator.to_list
+/// > from_a |> yielder.take(26) |> yielder.to_list
 /// ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n",
 ///   "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
 /// ```
@@ -145,7 +145,7 @@ pub fn create_infinite(
   validate validate: fn(item_type) -> Bool,
   add add: fn(item_type, step_type) -> item_type,
   compare compare: fn(item_type, item_type) -> order.Order,
-) -> fn(item_type, step_type) -> Result(iterator.Iterator(item_type), Nil) {
+) -> fn(item_type, step_type) -> Result(yielder.Yielder(item_type), Nil) {
   let is_step_zero = fn(a, s) -> Bool {
     case compare(a, add(a, s)) {
       order.Eq -> True
@@ -158,11 +158,11 @@ pub fn create_infinite(
 
     use <- bool.guard(
       is_step_zero(a, s),
-      iterator.once(fn() { a })
+      yielder.once(fn() { a })
         |> Ok,
     )
 
-    iterator.unfold(a, fn(current) { iterator.Next(current, add(current, s)) })
+    yielder.unfold(a, fn(current) { yielder.Next(current, add(current, s)) })
     |> Ok
   }
 }

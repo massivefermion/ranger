@@ -1,5 +1,5 @@
-import gleam/iterator
 import gleam/string
+import gleam/yielder
 
 import gleeunit
 import gleeunit/should
@@ -40,7 +40,7 @@ pub fn a_to_e_test() {
     compare: string.compare,
   )("a", "e", -1)
   |> should.be_ok
-  |> iterator.to_list
+  |> yielder.to_list
   |> should.equal(["a", "b", "c", "d", "e"])
 }
 
@@ -58,7 +58,7 @@ pub fn z_to_p_double_step_test() {
     compare: string.compare,
   )("z", "p", -2)
   |> should.be_ok
-  |> iterator.to_list
+  |> yielder.to_list
   |> should.equal(["z", "x", "v", "t", "r", "p"])
 }
 
@@ -76,6 +76,6 @@ pub fn z_to_p_triple_step_test() {
     compare: string.compare,
   )("z", "p", 3)
   |> should.be_ok
-  |> iterator.to_list
+  |> yielder.to_list
   |> should.equal(["z", "w", "t", "q"])
 }
