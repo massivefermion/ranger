@@ -28,6 +28,7 @@ and its documentation can be found at <https://hexdocs.pm/ranger>.
 
 ```gleam
 import gleam/float
+import gleam/yielder
 import ranger
 
 pub fn main() {
@@ -41,6 +42,6 @@ pub fn main() {
 
   let assert Ok(z_to_p) = range("z", "p", 1)
   z_to_p
-  |> iterator.to_list
+  |> yielder.to_list
 }
 ```
